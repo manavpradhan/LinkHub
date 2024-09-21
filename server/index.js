@@ -1,15 +1,21 @@
-import express from "express";
+import app from "./app.js";
+import { connectToDatabase } from "./database.js";
+import dotenv from "dotenv";
 
-const app = express();
+dotenv.config();
 
-const port = process.env.PORT || 8080;
+connectToDatabase();
 
-app.get("/", (req, res) => {
-  res.send("hello");
+const server = app.listen(process.env.PORT, () => {
+  console.log(`server is running on port: ${process.env.PORT}`);
 });
 
-app.listen(port, () => {
-  console.log(`servver is running on port: ${port}`);
-});
+// Unhandled Promise Rejection
+process.on("unhandledRejection", (err) => {
+  console.log(`Error: ${err.message}`);
+  console.log(`Shutting down the server due to Unhandled Promise Rejection`);
 
-export default app;
+  server.close(() => {
+    process.exit(1);
+  });
+});

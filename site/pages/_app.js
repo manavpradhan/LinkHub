@@ -8,13 +8,33 @@ import "../public/nprogress.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Script from "next/script";
+import useUserStore from "@/store/userStore";
+import useThemeStore from "@/store/themeStore";
 
 export default function App({ Component, pageProps }) {
   const [isLoading, setIsLoading] = useState(false);
   const [theme, setTheme] = useState("light");
+
+  const user = useUserStore();
   const router = useRouter();
+  const curTheme = useThemeStore();
 
   useEffect(() => {
+    const userInfo = user.loadUser();
+    if (Object.keys(userInfo).length !== 0) {
+      const token = localStorage.getItem("user-token");
+      user.setUserInfo(userInfo, token);
+    }
+
+    const now = new Date();
+    if (now.getTime > user.expiry) {
+      localStorage.removeItem("user-info");
+      localStorage.removeItem("user-token");
+    }
+
+    curTheme.setTheme(theme);
+    curTheme.saveTheme(theme);
+
     const handleStart = () => {
       setIsLoading(true);
       NProgress.start();
@@ -33,7 +53,7 @@ export default function App({ Component, pageProps }) {
       router.events.off("routeChangeComplete", handleComplete);
       router.events.off("routeChangeError", handleComplete);
     };
-  }, []);
+  }, [theme]);
 
   return (
     <div className={theme}>

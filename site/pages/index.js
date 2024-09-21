@@ -12,9 +12,10 @@ export default function Home() {
       />
 
       <main className="w-full min-h-screen flex flex-col justify-center items-center dark:bg-black bg-white">
-        <h1 className="text-center">
+        <h1 className="text-center ">
           {" "}
-          Welcome to <br />
+          <span className="text-gray-600 dark:text-white">Welcome to</span>{" "}
+          <br />
           <span className="text-indigo-600 font-semibold">
             NextJS Featured Template
           </span>
